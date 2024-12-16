@@ -1,0 +1,30 @@
+version: "1" # version of compose format
+
+services:
+  # Node.js Service
+  api:
+    build:
+      context: ./server
+      target: production
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    volumes:
+      - ./server:/app # Mounts the current directory to the /app directory in the container
+      - /app/node_modules # Ensures the container’s node_modules doesn’t conflict with the host’s node_modules
+    command: npm run dev
+
+  # MySQL Service
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
