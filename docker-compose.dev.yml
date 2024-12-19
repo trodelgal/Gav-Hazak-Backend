@@ -8,23 +8,29 @@ services:
     build:
       context: ./server
       target: "${NODE_ENV}" # Target the development stage in the Dockerfile"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=gav-hazak-dev
+      - DB_PORT=3306
     ports:
       - "${APP_PORT}:${APP_PORT}"
     depends_on:
-      - db
+      - mysql
     volumes:
       - ./server:/app # Mounts the current directory to the /app directory in the container
       - /app/node_modules # Ensures the container’s node_modules doesn’t conflict with the host’s node_modules
-    command: npm run dev
+    command: npm run spinup:dev # Run the migration and start the server
 
   # MySQL Service
-  db:
+  mysql:
     env_file:
       - .env.dev
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_ROOT_PASSWORD: example # Set the root password
+      MYSQL_DATABASE: gav-hazak-dev
     ports:
       - "3307:3306"
     volumes:
